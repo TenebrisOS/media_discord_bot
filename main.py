@@ -29,13 +29,18 @@ async def Play(message):
     else :
         vc = await channel.connect()
         await message.channel.send("Joined Successfully!")
-        vc.play(discord.FFmpegPCMAudio("countdown.mp3"), after=lambda e: print('done', e))
+
+async def Stop(message):
+    channel = ctx.author.voice.channel
+    await message.voice_client.disconnect()
 
 @client.event
 async def on_message(message:discord.Message):
     if message.author.bot or not(str(message.content).startswith(ctx)):
         return
-    if message.channel.id == "Start" :
+    if message.channel.id == (ctx, "Start") :
         Play
+    if message.channel.id == (ctx, "Stop") :
+        Stop
 
 client.run(TOKEN)
