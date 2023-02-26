@@ -1,2 +1,3 @@
-# Music Discord Bot
-This is a simple discord bot made with python, which plays a list of mp3 downloaded musics from youtube choosen by my Discord server users :)
+# Youtube Music Discord Bot
+This is a simple discord bot made with python, which plays Youtube Music choosen by Discord Server users by commands
+The creation of the bot is from many insparations about youtube_dl bans :)
