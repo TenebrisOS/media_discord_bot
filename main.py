@@ -10,6 +10,7 @@ from dislash import InteractionClient
 from discord import app_commands
 from discord import __author__
 import asyncio
+from discord.ext.commands import Bot
 from discord.ext import commands
 
 with open('C:/Users/modib/Documents/kali/py/MusicBot/config.json') as f:
@@ -24,17 +25,16 @@ PREFIX = "*"
 tree = app_commands.CommandTree(client)
 #endregion
 
+async def leavevoice(ctx):
+    channel = ctx.author.voice.channel
+    vc_d = channel.disconnect()
+    await vc_d
+    print("Left Voice Channel")
+
 @client.event
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
     await client.change_presence(activity=discord.Activity(type=discord.ActivityType.listening, name="my Master orders :)"))
-
-@client.event
-async def Leave(ctx):
-    server = ctx.message.server
-    voice_client = client.voice_client_in(server)
-    await voice_client.disconnect()
-    print("Left Voice Channel")
 
 @client.event
 async def on_message(message:discord.Message):
@@ -42,20 +42,22 @@ async def on_message(message:discord.Message):
         return
     args = message.content.split(" ")
     args[0] = args[0][1::]
-
+    print(args[0])
     if args[0] == "Start":
         await message.channel.send("Comingg !!!")
-    channel = message.author.voice.channel
-    vc = channel.connect()
-    print("Joined Voice Channel")
-    await message.channel.send("Joined Successfully!")
-    if channel is None :
-        await message.channel.send("You aren't in a voice channel yet!")
+        channel = message.author.voice.channel
+        vc_c = channel.connect()
+        await vc_c
+        print("Joined Voice Channel", channel)
+        await message.channel.send("Joined Successfully!")
+        if channel is None :
+            await message.channel.send("You aren't in a voice channel yet!")
 
-    elif args[0] == "Stop" :
-        server = message.message.server
-    voice_client = client.voice_client_in(server)
-    await voice_client.disconnect()
-    print("Left Voice Channel")
+    elif args[0] == "Stop":
+        async def leavevoice(ctx):
+            channel = ctx.author.voice.channel
+            vc_d = channel.disconnect()
+            await vc_d
+            print("Left Voice Channel")
 
 client.run(TOKEN)
