@@ -79,9 +79,14 @@ async def on_message(message:discord.Message):
         os.rename(out_file, new_file)
         await message.channel.send("Succefully added to Playlist")
         channel = message.author.voice.channel
+        if channel is None :
+            await message.channel.send("You are not in a voice channel yet!")
         print("Joined Voice Channel", channel)
         await message.channel.send("Joined Successfully!")
         voice = await message.author.voice.channel.connect()
         voice.play(discord.FFmpegPCMAudio(new_file, executable="C:/ffmpeg/bin/ffmpeg.exe"))
+
+    else :
+        await message.channel.send("Unknown Command")
 
 client.run(TOKEN)
