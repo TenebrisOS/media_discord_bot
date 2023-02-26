@@ -20,20 +20,6 @@ intents.message_content = True
 client = discord.Client(intents=intents)
 PREFIX = "*"
 tree = app_commands.CommandTree(client)
-ytdl_format_options = {
-    'format': 'bestaudio/best',
-    'outtmpl': 'C:/Users/modib/Videos/%(extractor)s-%(id)s-%(title)s.%(ext)s',
-    'reactrictfilenames': True,
-    'noplaylist': True,
-    'nocheckcertificate': True,
-    'ignoreerrors': False,
-    'logtostderr': False,
-    'quiet': True,
-    'no_warnings': True,
-    'default_search': 'auto',
-    'source_addreacs': '0.0.0.0',
-    'output': r'youtube-dl',
-}
 #endregion
 
 async def leavevoice(ctx):
