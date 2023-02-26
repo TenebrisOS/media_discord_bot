@@ -10,6 +10,8 @@ from dislash import InteractionClient
 from discord import app_commands
 from discord import __author__
 import asyncio
+import spotipy
+from spotipy.oauth2 import SpotifyClientCredentials
 from discord.ext.commands import Bot
 from discord.ext import commands
 
@@ -22,7 +24,10 @@ intents = discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 PREFIX = "*"
+SP_CLIENT_SECRET = data["SP_CLIENT_SECRET"]
+SP_CLIENT_ID = data["SP_CLIENT_ID"]
 tree = app_commands.CommandTree(client)
+sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SP_CLIENT_ID, client_secret=SP_CLIENT_SECRET))
 #endregion
 
 async def leavevoice(ctx):
@@ -52,7 +57,6 @@ async def on_message(message:discord.Message):
         await message.channel.send("Joined Successfully!")
         if channel is None :
             await message.channel.send("You aren't in a voice channel yet!")
-
     elif args[0] == "Stop":
         async def leavevoice(ctx):
             channel = ctx.author.voice.channel
