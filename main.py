@@ -2,18 +2,13 @@ import discord
 import io
 import pyaudio
 import time
-import numpy as np
-from matplotlib import pyplot as plt
 import json
-from discord.ext import commands
-from dislash import InteractionClient
 from discord import app_commands
-from discord import __author__
 import asyncio
-import spotipy
-from spotipy.oauth2 import SpotifyClientCredentials
-from discord.ext.commands import Bot
-from discord.ext import commands
+import pytube as pt
+from pytube import YouTube
+import os
+import ffmpeg
 
 with open('C:/Users/modib/Documents/kali/py/MusicBot/config.json') as f:
    data = json.load(f)
@@ -24,10 +19,21 @@ intents = discord.Intents.all()
 intents.message_content = True
 client = discord.Client(intents=intents)
 PREFIX = "*"
-SP_CLIENT_SECRET = data["SP_CLIENT_SECRET"]
-SP_CLIENT_ID = data["SP_CLIENT_ID"]
 tree = app_commands.CommandTree(client)
-sp = spotipy.Spotify(auth_manager=SpotifyClientCredentials(client_id=SP_CLIENT_ID, client_secret=SP_CLIENT_SECRET))
+ytdl_format_options = {
+    'format': 'bestaudio/best',
+    'outtmpl': 'C:/Users/modib/Videos/%(extractor)s-%(id)s-%(title)s.%(ext)s',
+    'reactrictfilenames': True,
+    'noplaylist': True,
+    'nocheckcertificate': True,
+    'ignoreerrors': False,
+    'logtostderr': False,
+    'quiet': True,
+    'no_warnings': True,
+    'default_search': 'auto',
+    'source_addreacs': '0.0.0.0',
+    'output': r'youtube-dl',
+}
 #endregion
 
 async def leavevoice(ctx):
@@ -48,20 +54,34 @@ async def on_message(message:discord.Message):
     args = message.content.split(" ")
     args[0] = args[0][1::]
     print(args[0])
-    if args[0] == "Start":
-        await message.channel.send("Comingg !!!")
-        channel = message.author.voice.channel
-        vc_c = channel.connect()
-        await vc_c
-        print("Joined Voice Channel", channel)
-        await message.channel.send("Joined Successfully!")
-        if channel is None :
-            await message.channel.send("You aren't in a voice channel yet!")
-    elif args[0] == "Stop":
+
+    if args[0] == "Stop":
         async def leavevoice(ctx):
             channel = ctx.author.voice.channel
             vc_d = channel.disconnect()
             await vc_d
             print("Left Voice Channel")
+    
+    if args[0] == "Help":
+        mbd = discord.Embed(title='Help')
+        mbd.color = discord.Color.orange()
+        mbd.add_field(name="Usage", value="*Play <youtube link>")
+        await message.channel.send(embed=mbd)
+
+    if args[0] == "Play":
+        await message.channel.send("Ok.")
+        print("Downloading", args[1])
+        yt = YouTube(args[1])
+        video = yt.streams.filter(only_audio=True).first()
+        out_file = video.download(output_path="C:/Users/modib/Videos/Captures/")
+        base, ext = os.path.splitext(out_file)
+        new_file = base + '.mp3'
+        os.rename(out_file, new_file)
+        await message.channel.send("Succefully added to Playlist")
+        channel = message.author.voice.channel
+        print("Joined Voice Channel", channel)
+        await message.channel.send("Joined Successfully!")
+        voice = await message.author.voice.channel.connect()
+        voice.play(discord.FFmpegPCMAudio(new_file, executable="C:/ffmpeg/bin/ffmpeg.exe"))
 
 client.run(TOKEN)
